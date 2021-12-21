@@ -7,21 +7,19 @@
  * y dos  métodos estáticos para trabajar con
  * arrays de dos dimensiones
  *
- * @author -
+ * @author - Carlos Conde
  */
 
-
+import java.util.Arrays;
 import java.util.Random;
 
 public class ListaNumeros {
     public static final int DIMENSION = 10;
     public static final int ANCHO_FORMATO = 6;
     public static final char CAR_CABECERA = '-';
-
+    private int[] lista;
+    private int pos;
     private static final Random generador = new Random();
-    //TODO
-    
-    
 
     /**
      * Constructor de la clase ListaNumeros
@@ -30,9 +28,9 @@ public class ListaNumeros {
      *
      * @param n el tamaño máximo de la lista
      */
-    public ListaNumeros() {
-        //TODO
-        
+    public ListaNumeros(int n) {
+        pos = 0;
+        lista = new int[n];
     }
 
     /**
@@ -42,44 +40,49 @@ public class ListaNumeros {
      * @param numero el valor que se añade.  
      * @return true si se ha podido añadir, false en otro caso
      */
-    public void addElemento() {
-        //TODO
-        
-        
-
+    public boolean addElemento(int numero) {
+        if (!estaCompleta()){
+            lista[pos] += numero;
+            pos++;
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**
      * @return true si la lista está completa, false en otro caso
      * Hacer sin if
      */
-    public void estaCompleta() {
-        //TODO
-
+    public boolean estaCompleta() {
+        return pos == lista.length;
     }
 
     /**
      * @return true si la lista está vacía, false en otro caso.
      * Hacer sin if
      */
-    public void estaVacia() {
-       //TODO
-
+    public boolean estaVacia() {
+        return pos == 0;
     }
 
     /**
      * @return el nº de elementos realmente guardados en la lista
      */
-    public void getTotalNumeros() {
-        //TODO
-
+    public int getTotalNumeros() {
+        return lista.length;
     }
 
     /**
      * Vacía la lista
      */
     public void vaciarLista() {
-       //TODO
+        int i = 0;
+        while(i < lista.length){
+            i++;
+            lista[i] = 0;
+        }
+        pos = 0;
     }
 
     /**
@@ -89,14 +92,25 @@ public class ListaNumeros {
      * Si la lista está vacía devuelve ""
      */
     public String toString() {
-       //TODO
-       
-       
-       
-       return "";
+        String str = "";
+        if (!estaVacia()) {
+            for (int j = 0; j < ANCHO_FORMATO; j++) {
+                str += CAR_CABECERA;
+            }
+            str += "\n";
+            for (int i = 0; i < lista.length; i++) {
+                str += Utilidades.centrarNumero(lista[i], ANCHO_FORMATO);
+            }
+            str += "\n";
+            for (int j = 0; j < ANCHO_FORMATO; j++) {
+                str += CAR_CABECERA;
+            }
+            str += "\n";
+            return str;
+        } else {
+            return "";
+        }
     }
-
-     
 
     /**
      * Mostrar en pantalla la lista
@@ -120,10 +134,19 @@ public class ListaNumeros {
      * No se puede usar ningún otro array auxiliar ni hay que ordenar previamente
      * la lista
      */
-    public void segundoMaximo() {       
-       //TODO
-
-        
+    public int segundoMaximo() {
+        int prim = Integer.MIN_VALUE;
+        int seg = Integer.MIN_VALUE;
+        for (int i = 0; i < lista.length; i++) {
+            if (prim < lista[i]){
+                seg = prim;
+                prim = lista[i];
+            }
+            if (seg < lista[i]){
+                seg = lista[i];
+            }
+        }
+        return seg;
     }
 
     /**
@@ -143,11 +166,22 @@ public class ListaNumeros {
      * @return true si se han colocado los segundos máximos
      *          false si no se han colocado los segundos máximos porque no había ninguno
      */
-    public void segundosMaximosAlPrincipio() {
-        //TODO
-        
-        
-
+    public boolean segundosMaximosAlPrincipio() {
+        int max = 0;
+        if (lista.length <= 1){
+            return false;
+        }else{
+            for (int i = 0; i < lista.length; i++) {
+                if (segundoMaximo() == lista[i]){
+                    for (int j = 0; j < 0; j--) {
+                        lista[j] = lista[j - 1];
+                    }
+                    lista[max] = segundoMaximo();
+                    max++;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -160,11 +194,16 @@ public class ListaNumeros {
      *  
      * Usa exclusivamente métodos de la clase Arrays
      */
-    public void buscarBinario() {
-         //TODO
-         
-         
-
+    public int buscarBinario(int numero) {
+        int[] listaCopia = Arrays.copyOf(lista, lista.length);
+        if (Arrays.binarySearch(listaCopia, numero) > -1){
+            for (int i = 0; i < listaCopia.length; i++) {
+                if (lista[i] == numero){
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     /**
@@ -175,11 +214,14 @@ public class ListaNumeros {
      * Estos valores van a representar el brillo de una zona del espacio
      * 
      */
-    public void crearBrillos() {
-       //TODO
-       
-       
-
+    public static int[][] crearBrillos() {
+        int[][] array = new int[DIMENSION][DIMENSION];
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                array[i][j] = generador.nextInt(12)-1;
+            }
+        }
+        return array;
     }
 
     /**
@@ -194,11 +236,22 @@ public class ListaNumeros {
      * 
      * Nota -  No hay estrellas en los bordes del array brillos
      */
-    public void detectarEstrellas() {
-       //TODO
-       
-       
-       
+    public static boolean[][] detectarEstrellas(int[][] brillos) {
+        //TODO
+        int x = 0;
+        boolean[][] array = new boolean[brillos.length][brillos[0].length];
+        for (int i = 0; i < brillos.length; i++) {
+            if (i != 0){
+                for (int j = 0; j < brillos[0].length; j++) {
+                    if (j != 0){
+                        x = brillos[i - 1][j] + brillos[i][j - 1] + brillos[i + 1][j] + brillos[i][j - 1];
+                        if (x > 30){
+                            array[i][j] = true;
+                        }
+                    }
+                }
+            }
+        }
+        return array;
     }
-
 }
